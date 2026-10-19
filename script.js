@@ -226,3 +226,106 @@ if (!reducedMotion) {
 }
 
 hearts(12);
+
+
+// VERSION 2.2 — интерактивные сердечки, шлейф блёсток и разлёт частиц.
+(function setupInteractionEffects() {
+  const layer = document.getElementById("interactionEffects");
+  if (!layer || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const heartSymbols = ["♥", "♡", "❤", "✧", "💕"];
+  const sparkleSymbols = ["✦", "✧", "·"];
+  let lastSparkleAt = 0;
+  let lastSparkleX = -100;
+  let lastSparkleY = -100;
+  let lastTapAt = 0;
+
+  function particle(className, x, y, symbol, styles = {}) {
+    const node = document.createElement("span");
+    node.className = className;
+    if (symbol) node.textContent = symbol;
+    node.style.left = `${x}px`;
+    node.style.top = `${y}px`;
+    Object.entries(styles).forEach(([key, value]) => node.style.setProperty(key, value));
+    layer.appendChild(node);
+    const duration = Number.parseFloat(styles["--life"] || styles["--duration"] || "1000");
+    window.setTimeout(() => node.remove(), duration + 150);
+    return node;
+  }
+
+  function sprinkleHearts(x, y, amount = 4) {
+    for (let i = 0; i < amount; i++) {
+      const life = 750 + Math.random() * 500;
+      particle("touch-heart", x + (Math.random() - .5) * 34, y + (Math.random() - .5) * 20,
+        heartSymbols[Math.floor(Math.random() * heartSymbols.length)], {
+          "--size": `${13 + Math.random() * 17}px`,
+          "--life": `${life}ms`,
+          "--drift": `${Math.round((Math.random() - .5) * 90)}px`,
+          "--rise": `${70 + Math.random() * 100}px`,
+          "--rotate": `${Math.round((Math.random() - .5) * 80)}deg`
+        });
+    }
+  }
+
+  function sparkle(x, y) {
+    particle("cursor-sparkle", x, y, sparkleSymbols[Math.floor(Math.random() * sparkleSymbols.length)], {
+      "--size": `${4 + Math.random() * 8}px`,
+      "--life": "650ms"
+    });
+  }
+
+  function burst(x, y, amount = 28) {
+    const palette = ["#ffe0f7", "#ffc0ec", "#e9c7ff", "#ffffff", "#f7a9d9"];
+    for (let i = 0; i < amount; i++) {
+      const angle = (Math.PI * 2 * i / amount) + (Math.random() - .5) * .35;
+      const distance = 55 + Math.random() * 115;
+      const duration = 650 + Math.random() * 550;
+      particle("heart-burst-particle", x, y,
+        heartSymbols[Math.floor(Math.random() * heartSymbols.length)], {
+          "--dx": `${Math.cos(angle) * distance}px`,
+          "--dy": `${Math.sin(angle) * distance}px`,
+          "--duration": `${duration}ms`,
+          "--particle-size": `${12 + Math.random() * 16}px`,
+          "--particle-color": palette[Math.floor(Math.random() * palette.length)],
+          "--spin": `${Math.round((Math.random() - .5) * 360)}deg`
+        });
+    }
+  }
+
+  // Шлейф создаётся только при движении мыши, а не при прокрутке/касаниях.
+  window.addEventListener("pointermove", event => {
+    if (event.pointerType !== "mouse") return;
+    const now = performance.now();
+    const dx = event.clientX - lastSparkleX;
+    const dy = event.clientY - lastSparkleY;
+    if (now - lastSparkleAt < 32 || dx * dx + dy * dy < 100) return;
+    lastSparkleAt = now;
+    lastSparkleX = event.clientX;
+    lastSparkleY = event.clientY;
+    sparkle(event.clientX, event.clientY);
+    if (Math.random() > .55) {
+      particle("touch-heart", event.clientX + (Math.random() - .5) * 12, event.clientY,
+        "✧", { "--size": "12px", "--life": "600ms", "--drift": `${Math.random() * 24 - 12}px`, "--rise": "28px" });
+    }
+  }, { passive: true });
+
+  // Сердечки при касании экрана или клике мышью. Событие не блокирует кнопки формы.
+  window.addEventListener("pointerdown", event => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    const now = Date.now();
+    lastTapAt = now;
+    sprinkleHearts(event.clientX, event.clientY, event.pointerType === "mouse" ? 3 : 5);
+    const heart = event.target.closest(".hero-heart, .float-heart, .btn-yes");
+    if (heart) burst(event.clientX, event.clientY, heart.classList.contains("hero-heart") ? 34 : 24);
+  }, { passive: true });
+
+  // Дополнительная реакция на клавиатурную активацию сердечка/кнопки.
+  document.addEventListener("click", event => {
+    const heart = event.target.closest(".hero-heart, .float-heart");
+    if (!heart) return;
+    // Не дублируем pointerdown для обычного клика мышью/касания.
+    if (Date.now() - lastTapAt < 450) return;
+    const rect = heart.getBoundingClientRect();
+    burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 34);
+  });
+})();

@@ -142,3 +142,76 @@ footer span, .confetti { color: #ffd0f0; }
   .video-background video { display: none; }
   .video-background { background-image: linear-gradient(135deg, rgba(35,17,47,.48), rgba(91,45,87,.38)), url("background-fallback.jpg"); }
 }
+
+/* VERSION 2.2 — touch hearts, cursor sparkle trail and heart burst */
+.interaction-effects-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint;
+}
+.touch-heart, .cursor-sparkle, .heart-burst-particle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform, opacity;
+  user-select: none;
+  pointer-events: none;
+}
+.touch-heart {
+  color: #ffd1f1;
+  font-size: var(--size, 22px);
+  line-height: 1;
+  text-shadow: 0 2px 12px rgba(255, 147, 224, .7);
+  animation: touch-heart-rise var(--life, 1050ms) ease-out forwards;
+}
+.cursor-sparkle {
+  width: var(--size, 8px);
+  height: var(--size, 8px);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 15%, #ffe2fb 35%, rgba(255,185,244,.12) 72%);
+  box-shadow: 0 0 9px 2px rgba(255, 199, 247, .75);
+  animation: sparkle-fade 650ms ease-out forwards;
+}
+.cursor-sparkle::after {
+  content: "✦";
+  position: absolute;
+  left: 50%; top: 50%;
+  color: #fff2ff;
+  font-size: calc(var(--size, 8px) * 1.7);
+  line-height: 1;
+  transform: translate(-50%, -50%);
+}
+.heart-burst-particle {
+  color: var(--particle-color, #ffd2f2);
+  font-size: var(--particle-size, 18px);
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(255, 175, 236, .7);
+  animation: heart-particle-burst var(--duration, 850ms) cubic-bezier(.12,.7,.25,1) forwards;
+}
+.hero-heart { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.hero-heart:active { transform: scale(.94); }
+@keyframes touch-heart-rise {
+  0% { opacity: 0; transform: translate(-50%, -40%) scale(.45) rotate(-12deg); }
+  15% { opacity: 1; transform: translate(calc(-50% + var(--drift, 8px)), -65%) scale(1.08) rotate(8deg); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--drift, 8px)), calc(-50% - var(--rise, 105px))) scale(.75) rotate(var(--rotate, 22deg)); }
+}
+@keyframes sparkle-fade {
+  0% { opacity: 0; transform: translate(-50%,-50%) scale(.25) rotate(0deg); }
+  25% { opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(35deg); }
+  100% { opacity: 0; transform: translate(-50%,-50%) scale(.15) rotate(95deg); }
+}
+@keyframes heart-particle-burst {
+  0% { opacity: 1; transform: translate(-50%,-50%) scale(.45) rotate(0deg); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.25) rotate(var(--spin, 120deg)); }
+}
+@media (hover: none), (pointer: coarse) {
+  .hero-heart { cursor: default; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .interaction-effects-layer { display: none; }
+  .hero-heart:active { transform: none; }
+}
