@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8eaff">
+  <meta name="description" content="Маленькое приглашение на свидание 💗">
+  <title>У меня к тебе вопрос 💌 · Версия 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="video-background" id="videoBackground" aria-hidden="true">
+    <video id="backgroundVideo" autoplay muted loop playsinline preload="metadata" poster="background-fallback.jpg">
+      <source id="backgroundVideoSource" src="background-landscape.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <div class="floating-hearts" aria-hidden="true" id="floatingHearts"></div>
+  <div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
+  <div class="butterfly-layer" id="butterflyLayer" aria-hidden="true"></div>
+
+  <main class="page-shell">
+    <section class="card" id="intro">
+      <div class="eyebrow"><span>✦</span> маленькое приглашение <span>✦</span></div>
+      <div class="hero-heart" aria-hidden="true">💌</div>
+      <p class="script">У меня к тебе...</p>
+      <h1>один важный<br><span>вопрос</span></h1>
+      <p class="lead">Я тут подумал, что было бы здорово провести время вместе. Как тебе такая идея?</p>
+      <div class="question">Пойдёшь со мной на свидание? 🥹</div>
+      <div class="answer-buttons">
+        <button class="btn btn-yes" id="yesBtn">Да, конечно! 💗</button>
+        <button class="btn btn-no" id="noBtn">Нет 🙈</button>
+      </div>
+      <p class="tiny-note">P.S. правильного ответа нет — главное, чтобы тебе было комфортно 💕</p>
+    </section>
+
+    <section class="card hidden" id="planner">
+      <div class="step-label">ШАГ 1 ИЗ 2 · ПЛАНИРУЕМ НАШ ДЕНЬ</div>
+      <div class="hero-heart small" aria-hidden="true">🌷</div>
+      <p class="script">Ура, это приятно! 💗</p>
+      <h2>Давай выберем<br><span>наш план</span></h2>
+      <p class="lead">Что тебе больше по душе?</p>
+      <div class="date-options" role="group" aria-label="Идея свидания">
+        <button class="date-option" data-idea="Кофе" aria-pressed="false"><span class="option-emoji">☕</span><strong>Кофе</strong><small>Поболтать обо всём</small></button>
+        <button class="date-option" data-idea="Прогулка" aria-pressed="false"><span class="option-emoji">🌆</span><strong>Прогулка</strong><small>Свежий воздух и мы</small></button>
+        <button class="date-option" data-idea="Кино" aria-pressed="false"><span class="option-emoji">🍿</span><strong>Кино</strong><small>Выберем что-нибудь</small></button>
+      </div>
+      <div class="field-grid">
+        <label class="field">Когда тебе удобно?
+          <input id="dateInput" type="date" required>
+        </label>
+        <label class="field">Во сколько?
+          <select id="timeInput">
+            <option value="">Выбери время</option>
+            <option>12:00</option><option>13:00</option><option>14:00</option>
+            <option>15:00</option><option>16:00</option><option>17:00</option>
+            <option>18:00</option><option>19:00</option><option>20:00</option>
+          </select>
+        </label>
+      </div>
+      <label class="field">Может, у тебя есть свой вариант? <span class="optional">(необязательно)</span>
+        <textarea id="noteInput" rows="2" placeholder="Например, другое место или время…"></textarea>
+      </label>
+      <div class="planner-actions">
+        <button class="btn btn-back" id="backBtn">← Назад</button>
+        <button class="btn btn-yes" id="confirmBtn">Это наш план 💞</button>
+      </div>
+      <p class="form-error" id="formError" role="alert"></p>
+      <p class="tiny-note">Дату и время можно обсудить и поменять — это только идея 😊</p>
+    </section>
+
+    <section class="card hidden final-card" id="final">
+      <div class="confetti" aria-hidden="true">✦ ✧ ✦</div>
+      <div class="hero-heart" aria-hidden="true">💖</div>
+      <p class="script">Кажется, у нас намечается...</p>
+      <h2>маленькое<br><span>приключение!</span></h2>
+      <div class="summary" id="summary"></div>
+      <p class="lead">Буду рад провести это время с тобой 💗</p>
+      <button class="btn btn-yes" id="sendBtn">Отправить ответ в Telegram ✈️</button>
+      <button class="text-button" id="editBtn">Изменить план</button>
+      <p class="tiny-note" id="telegramHint">Откроется Telegram с готовым сообщением — останется нажать «Отправить».</p>
+    </section>
+    <footer>сделано с теплом и чуточкой волнения <span>♡</span></footer>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
